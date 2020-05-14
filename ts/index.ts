@@ -25,30 +25,7 @@ $(document).ready(function () {
   }
   bars.populateData(DEFAULT_AMOUNT_OF_BARS);
   bars.populateBars();
-  //testingHarnessSort();
 });
-
-
-function testingHarnessSort(){
-  for(let i =0; i < 100; i++){
-    bars.populateData(DEFAULT_AMOUNT_OF_BARS);
-    let data = bars.values;
-    //let bdata = binaryinsertionSort(bars.values);
-    data.sort(function(a, b){return a - b});
-  //  console.log(arraysEqual(bdata,data));
-  //  console.log(bdata);
-  }
-}
-
-function arraysEqual(a: number[], b:number[]) {
-  if (a == null || b == null) return false;
-  if (a.length != b.length) return false;
-
-  for (var i = 0; i < a.length; ++i) {
-    if (a[i] !== b[i]) return false;
-  }
-  return true;
-}
 
 
 
@@ -85,7 +62,7 @@ $(".sortType").on("click", function () {
   let sort = $(this).data("order");
   bars.sortingtype = sort;
   $("#navbarDropdown").html(sort);
-  $('#userInfoWarning').html(""); // no more warning about selecting a valid sorting method
+  $('#userInfoWarning').html(""); 
   console.log("sorting method changed to " + sort + " Sort");
 });
 

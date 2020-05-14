@@ -1,4 +1,36 @@
 //default code for sorting algorithms for reference.-
+import {barsGroup} from "./js/BarGroup.js";
+
+const DEFAULT_AMOUNT_OF_BARS = 1000;
+
+function testingHarnessSort(){
+  for(let i =0; i < 100; i++){
+    let bars = new barsGroup();
+    bars.populateData(DEFAULT_AMOUNT_OF_BARS);
+    let data = bars.values;
+    let bdata = bubbleSortA(bars.values);
+    data.sort(function(a, b){return a - b});
+     console.log(arraysEqual(bdata,data));
+     console.log(bdata);
+  }
+}
+
+function arraysEqual(a: number[], b:number[]) {
+  if (a == null || b == null) return false;
+  if (a.length != b.length) return false;
+
+  for (var i = 0; i < a.length; ++i) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+}
+
+
+
+
+
+
+
 /**
  * Bubble Sort 
  */
@@ -75,7 +107,7 @@ function mergeSortA(arrVal: number[]): number[]{
     const middle = Math.floor(arrVal.length/2);
     const leftarr = arrVal.slice(0, middle);
     const rightarr = arrVal.slice(middle, arrVal.length);
-    return mergeA(mergeSort(leftarr), mergeSort(rightarr));
+    return mergeA(mergeSortA(leftarr), mergeSortA(rightarr));
   }
   
   function mergeA(leftarr: number [], rightarr: number[]): number []{
@@ -100,9 +132,9 @@ function mergeSortA(arrVal: number[]): number[]{
 
 function quickSortA(arrVal: number[], left:number, right:number) {
   if(arrVal.length > 1){
-    let split = partition(arrVal, left, right);
-    if (left < split - 1) quickSort(arrVal, left, split - 1);
-    if (split < right) quickSort(arrVal, split, right);
+    let split = partitionA(arrVal, left, right);
+    if (left < split - 1) quickSortA(arrVal, left, split - 1);
+    if (split < right) quickSortA(arrVal, split, right);
   }
   return arrVal;
 }
@@ -123,7 +155,7 @@ function swapA(arrVal: number[], ind1: number, ind2: number) {
     while (arrVal[i] < pivot) i++;
     while (arrVal[j] > pivot) j--;
     if (i <= j) {
-      swap(arrVal, i, j); 
+      swapA(arrVal, i, j); 
       i++;
       j--;
     }
