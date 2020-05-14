@@ -1,0 +1,99 @@
+/* Navigation Bar */
+.navbar{
+  position: absolute;
+  position: fixed;
+  width:100%;
+  transition: background-color 1s;
+}
+.navbar-brand{
+  font-size: 22px;
+}
+.nav-item{
+  margin-left: 1rem;  
+}
+.navbar .navbar-nav li a{
+  font-size: 16px;
+}
+
+
+.arrayHolder {
+  position: absolute;
+  display:flex;
+  justify-content:center;
+  align-items: flex-end;
+  height: 100vh; 
+  background-color:#000000;
+  width: 100vw;;
+}
+
+.arrayBar {
+  color: rgb(0, 0, 0);
+  margin: 0 1px;
+  background-color: white;
+  border-radius: 1px;
+}
+#top-slider-label{
+  color: white;
+  background-color: rgba(10, 10, 10, 0.514);
+  border-top-right-radius: 1rem;
+  border-top-left-radius: 1rem;
+  text-align: center;
+}
+
+#bottom-slider-label{
+  color: white;
+  background-color: rgba(10, 10, 10, 0.514);
+  text-align: center;
+}
+
+
+.columnsShape{
+  position: relative;
+  display:flex;
+  flex-direction: column;
+  background-color: rgba(0, 136, 255, 0.555);
+  top: 60px;
+  left: 5px;
+  width: 420px;
+  border-radius: 1rem;
+}
+
+
+.columnsData{
+  position: relative;
+  display:flex;
+  flex-direction: column;
+  background-color: rgba(54, 54, 54, 0.555);
+  top: 60px;
+  left: 5px;
+  width: 250px;
+  border-radius: 1rem;
+  margin-left: 1rem;
+}
+
+.slider-bar {
+  width: 400px;
+  height: 10px;
+  background-color: #4E4E56;
+  border-radius: 5px;
+  margin: 10px;
+}
+.slider-circle {
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  position: relative;
+  bottom: 4px;
+  left: 285px;
+  background: radial-gradient(circle, white 40%, #BEBEC1);
+}
+
+#rowShape {
+  display: flex;
+}
+
+.arrData{
+  text-align: center;
+  color: white;
+}
