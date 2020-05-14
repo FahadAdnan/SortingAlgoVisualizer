@@ -13,6 +13,12 @@ import { cssAnimation } from "../Animations.js";
 let animationArrM = [];
 let arrRefM = 0;
 let arrSwapsM = 0;
+export function mergeSortWrapper(arrVal, start) {
+    animationArrM = [];
+    arrRefM = 0;
+    arrSwapsM = 0;
+    return animationArrM;
+}
 export function mergeSort(arrVal, start) {
     if (arrVal.length <= 1) {
         return arrVal;

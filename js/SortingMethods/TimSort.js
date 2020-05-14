@@ -6,7 +6,14 @@ import { cssAnimation } from "../Animations.js";
 let animationsArrT = [];
 let arrRefT = 0;
 let arrSwapsT = 0;
-export function binaryinsertionSort(arrVal) {
+export function binaryinsertionSortWrapper(arrVal) {
+    animationsArrT = [];
+    arrRefT = 0;
+    arrSwapsT = 0;
+    binaryinsertionSort(arrVal);
+    return animationsArrT;
+}
+function binaryinsertionSort(arrVal) {
     const len = arrVal.length;
     animationsArrT.push(new cssAnimation("orange", [0], false, false));
     var insertVal = 0;
@@ -39,7 +46,7 @@ export function binaryinsertionSort(arrVal) {
             recolor.push(k);
         animationsArrT.push(new cssAnimation("orange", recolor, false, false));
     }
-    return arrVal;
+    return animationsArrT;
 }
 function BSearch(arrVal, left, right, value) {
     let mid = 0;

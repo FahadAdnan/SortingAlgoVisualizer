@@ -16,6 +16,14 @@ let arrRefM =0;
 let arrSwapsM =0;
 
 
+export function mergeSortWrapper(arrVal: number[], start: number): cssAnimation[]{
+  animationArrM = [];
+  arrRefM =0; 
+  arrSwapsM =0; 
+  return animationArrM;
+}
+
+
 export function mergeSort(arrVal: number[], start: number): number[]{
   if(arrVal.length <= 1){
     return arrVal;    

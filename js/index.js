@@ -1,5 +1,7 @@
 import { barsGroup } from "./BarGroup.js";
-import { quickSort } from "./SortingMethods/QuickSort.js";
+import { mergeSortWrapper, mergeSort } from "./SortingMethods/MergeSort.js";
+import { quickSortWrapper } from "./SortingMethods/QuickSort.js";
+import { binaryinsertionSortWrapper } from "./SortingMethods/TimSort.js";
 import { bubbleSort, insertionSort, selectionSort } from "./SortingMethods/SimpleAlgorithms.js";
 const DEFAULT_AMOUNT_OF_BARS = 285;
 const DEFAULT_DELAY_TIME = 11;
@@ -100,33 +102,17 @@ $("#sortClick").on("click", function () {
             Sorting(anime, bars.Sortdelay);
             break;
         case "Quick":
-            // arrRefQ =0;
-            // arrSwapsQ =0;
-            // while(animationsArrQ.length > 0) {
-            //   animationsArrQ.pop();
-            // }
-            anime = quickSort(bars.values, 0, bars.values.length - 1);
+            anime = quickSortWrapper(bars.values, 0, bars.values.length - 1);
             Sorting(anime, bars.Sortdelay);
             break;
         case "Merge":
-            // arrRefM =0;
-            // arrSwapsM =0;
-            // while(animationArrM.length > 0) {
-            //   animationArrM.pop();
-            // }
-            //bars.values = mergeSort(bars.values, 0);
-            //anime = animationArrM;
-            //Sorting(anime, bars.Sortdelay);
+            anime = mergeSortWrapper(bars.values, 0);
+            bars.values = mergeSort(bars.values, 0);
+            Sorting(anime, bars.Sortdelay);
             break;
         case "BInsertion":
-            // arrRefT =0;
-            // arrSwapsT =0;
-            // while(animationsArrT.length > 0) {
-            //   animationsArrT.pop();
-            // }
-            // binaryinsertionSort(bars.values);
-            // anime = animationsArrT;
-            // Sorting(anime, bars.Sortdelay);
+            anime = binaryinsertionSortWrapper(bars.values);
+            Sorting(anime, bars.Sortdelay);
             break;
         default:
             console.log("no valid sorting method selected");

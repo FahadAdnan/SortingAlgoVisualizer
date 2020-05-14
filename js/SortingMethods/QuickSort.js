@@ -7,7 +7,14 @@ import { cssAnimation } from "../Animations.js";
 let animationsArrQ = [];
 let arrRefQ = 0;
 let arrSwapsQ = 0;
-export function quickSort(arrVal, left, right) {
+export function quickSortWrapper(arrVal, left, right) {
+    animationsArrQ = [];
+    arrRefQ = 0;
+    arrSwapsQ = 0;
+    quickSort(arrVal, left, right);
+    return animationsArrQ;
+}
+function quickSort(arrVal, left, right) {
     if (arrVal.length > 1) {
         let split = partition(arrVal, left, right);
         if (left < split - 1)
@@ -15,7 +22,6 @@ export function quickSort(arrVal, left, right) {
         if (split < right)
             quickSort(arrVal, split, right);
     }
-    return animationsArrQ;
 }
 function swap(arrVal, ind1, ind2) {
     var temp = arrVal[ind1];

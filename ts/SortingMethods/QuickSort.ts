@@ -6,19 +6,26 @@ import {cssAnimation} from "../Animations.js";
  * Note: As quicksort is recursive there is a global animations array to push values to
  */
 
-
 let animationsArrQ: cssAnimation[] = [];
 let arrRefQ =0;
 let arrSwapsQ =0;
 
-export function quickSort(arrVal: number[], left:number, right:number) {
+export function quickSortWrapper(arrVal: number[], left:number, right:number) {
+  animationsArrQ = [];
+   arrRefQ =0;
+   arrSwapsQ =0;
+  quickSort(arrVal, left, right);
+  return animationsArrQ;
+}
+
+function quickSort(arrVal: number[], left:number, right:number) {
   if(arrVal.length > 1){
     let split = partition(arrVal, left, right);
     if (left < split - 1) quickSort(arrVal, left, split - 1);
     if (split < right) quickSort(arrVal, split, right);
   }
-  return animationsArrQ;
 }
+
 
 function swap(arrVal: number[], ind1: number, ind2: number) {
   var temp = arrVal[ind1];
