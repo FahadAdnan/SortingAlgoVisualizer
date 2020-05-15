@@ -13,14 +13,14 @@ const MIN_BAR_HEIGHT = 10;
 export class barsGroup{
     sortingtype: string;
     values: number [];
-    isSorted: boolean;
+    isSorting: boolean;
     Sortdelay: number;
     maxHeight: number;
 
     constructor(sortingtype: string, data: number[], Sortdelay: number, maxHeight: number){
         this.sortingtype = sortingtype;
         this.values = data;
-        this.isSorted = false;
+        this.isSorting = false;
         this.Sortdelay = Sortdelay;
         this.maxHeight = maxHeight;
     
@@ -44,7 +44,7 @@ export class barsGroup{
             barHolder.firstChild.remove();
           }
         for(let i = 0; i < amount; i++){
-        row = `<div class = "flex-fill arrayBar" style="height:${this.values[i]}px"></div>`
+        row = `<div class = "flex-fill arrayBar" style="height:${this.values[i]}px; background-color: white;"></div>`
           barHolder.innerHTML += row
         }
       }

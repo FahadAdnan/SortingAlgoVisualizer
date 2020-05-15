@@ -1,3 +1,12 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 import { barsGroup } from "./BarGroup.js";
 import { mergeSortWrapper, mergeSort } from "./SortingMethods/MergeSort.js";
 import { quickSortWrapper } from "./SortingMethods/QuickSort.js";
@@ -21,29 +30,7 @@ $(document).ready(function () {
     }
     bars.populateData(DEFAULT_AMOUNT_OF_BARS);
     bars.populateBars();
-    //testingHarnessSort();
 });
-function testingHarnessSort() {
-    for (let i = 0; i < 100; i++) {
-        bars.populateData(DEFAULT_AMOUNT_OF_BARS);
-        let data = bars.values;
-        //let bdata = binaryinsertionSort(bars.values);
-        data.sort(function (a, b) { return a - b; });
-        //  console.log(arraysEqual(bdata,data));
-        //  console.log(bdata);
-    }
-}
-function arraysEqual(a, b) {
-    if (a == null || b == null)
-        return false;
-    if (a.length != b.length)
-        return false;
-    for (var i = 0; i < a.length; ++i) {
-        if (a[i] !== b[i])
-            return false;
-    }
-    return true;
-}
 $("#slider-bar-amount").draggable({
     axis: "x",
     containment: "#sliderbars",
@@ -74,7 +61,7 @@ $(".sortType").on("click", function () {
     let sort = $(this).data("order");
     bars.sortingtype = sort;
     $("#navbarDropdown").html(sort);
-    $('#userInfoWarning').html(""); // no more warning about selecting a valid sorting method
+    $('#userInfoWarning').html("");
     console.log("sorting method changed to " + sort + " Sort");
 });
 $("#generateNewArrayClick").on("click", function () {
@@ -86,90 +73,121 @@ $("#refreshPageTitle").on("click", function () {
     window.location.reload();
 });
 $("#sortClick").on("click", function () {
-    console.log('Sort Button Clicked');
-    let anime; // animation array. 
-    switch (bars.sortingtype) {
-        case "Bubble":
-            anime = bubbleSort(bars.values);
-            Sorting(anime, bars.Sortdelay);
-            break;
-        case "Insertion":
-            anime = insertionSort(bars.values);
-            Sorting(anime, bars.Sortdelay);
-            break;
-        case "Selection":
-            anime = selectionSort(bars.values);
-            Sorting(anime, bars.Sortdelay);
-            break;
-        case "Quick":
-            anime = quickSortWrapper(bars.values, 0, bars.values.length - 1);
-            Sorting(anime, bars.Sortdelay);
-            break;
-        case "Merge":
-            anime = mergeSortWrapper(bars.values, 0);
-            bars.values = mergeSort(bars.values, 0);
-            Sorting(anime, bars.Sortdelay);
-            break;
-        case "BInsertion":
-            anime = binaryinsertionSortWrapper(bars.values);
-            Sorting(anime, bars.Sortdelay);
-            break;
-        default:
-            console.log("no valid sorting method selected");
-            $('#userInfoWarning').html("Please select a valid sorting method from the drop down menu");
-            break;
+    if ($(this).attr('data-sort') == 'false') {
+        let barHtmlArr = document.getElementsByClassName("arrayBar");
+        bars.isSorting = false;
+        bars.populateData(bars.values.length);
+        bars.populateBars();
+        console.log("WOW You have to stooooop.");
+    }
+    else {
+        bars.isSorting = true;
+        console.log('Sort Button Clicked');
+        let anime; // animation array. 
+        switch (bars.sortingtype) {
+            case "Bubble":
+                anime = bubbleSort(bars.values);
+                Sorting(anime);
+                break;
+            case "Insertion":
+                anime = insertionSort(bars.values);
+                Sorting(anime);
+                break;
+            case "Selection":
+                anime = selectionSort(bars.values);
+                Sorting(anime);
+                break;
+            case "Quick":
+                anime = quickSortWrapper(bars.values, 0, bars.values.length - 1);
+                Sorting(anime);
+                break;
+            case "Merge":
+                anime = mergeSortWrapper(bars.values, 0);
+                bars.values = mergeSort(bars.values, 0);
+                Sorting(anime);
+                break;
+            case "BInsertion":
+                anime = binaryinsertionSortWrapper(bars.values);
+                Sorting(anime);
+                break;
+            default:
+                console.log("no valid sorting method selected");
+                $('#userInfoWarning').html("Please select a valid sorting method from the drop down menu");
+                break;
+        }
     }
 });
-// Function that show all Sorting Animations
-function Sorting(CssAnimatinos, speed) {
-    let barHtmlArr = document.getElementsByClassName("arrayBar");
+function lockElementsShowTextForSorting() {
     $('#ArrayReferences').html("0");
     $('#ArraySwaps').html("0");
     $("#slider-bar-amount").draggable({ disabled: true });
-    $("#slider-speed-amount").draggable({ disabled: true });
-    $('#sortClick').prop('disabled', true);
+    //$("#slider-speed-amount").draggable({ disabled: true });
+    $('#sortClick').html('STOP');
+    $('#sortClick').removeClass('btn-primary');
+    $('#sortClick').addClass('btn-danger');
+    $('#sortClick').attr("data-sort", 'false');
+    //$('#sortClick').prop('disabled', true);
     $('#generateNewArrayClick').prop('disabled', true);
     $('#userInfoWarning').html("Please wait until sorting is completed or refresh your page.");
-    for (let i = 0; i < CssAnimatinos.length; i++) {
-        setTimeout(() => {
-            let animate = CssAnimatinos[i];
-            if (animate.setVal) { // setting height to value
-                if (animate.values.length < 2)
-                    return;
-                barHtmlArr[animate.values[0]].style.height = `${animate.values[1]}px`;
+}
+// Function that show all Sorting Animations
+function Sorting(allAniamtions) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let barHtmlArr = document.getElementsByClassName("arrayBar");
+        lockElementsShowTextForSorting();
+        for (const item of allAniamtions) {
+            let speed = bars.Sortdelay;
+            if (!bars.isSorting)
+                break;
+            yield sleep(speed);
+            yield showOneAnimation(item, speed);
+        }
+        // if you finish sorting then show the fancy finishing animation.
+        if (bars.isSorting) {
+            for (let i = 0; i < bars.values.length; i++) {
+                yield sleep(10);
+                barHtmlArr[i].style.backgroundColor = "white";
             }
-            else if (animate.swaps) { //swapping two values
-                if (animate.values.length < 2)
-                    return;
-                let temp = barHtmlArr[animate.values[0]].style.height;
-                let temp2 = barHtmlArr[animate.values[1]].style.height;
-                barHtmlArr[animate.values[0]].style.height = temp2;
-                barHtmlArr[animate.values[1]].style.height = temp;
-            }
-            else { //setting color to values
-                for (let position of animate.values) {
-                    if (barHtmlArr[position])
-                        (barHtmlArr[position]).style.backgroundColor = animate.color;
-                }
-            }
-            if (animate.arrRefs != 0)
-                $('#ArrayReferences').html(animate.arrRefs.toString());
-            if (animate.arrSwaps != 0)
-                $('#ArraySwaps').html(animate.arrSwaps.toString());
-        }, speed * (i + 1));
-    }
-    //Fancy finishing animation. 
-    const TIME_TO_FINISH_MAIN_ANIMATION = speed * CssAnimatinos.length + 10;
-    for (let i = 0; i < bars.values.length; i++) {
-        setTimeout(() => {
-            barHtmlArr[i].style.backgroundColor = "white";
-        }, FANCY_ANIMATION_DELAY * i + TIME_TO_FINISH_MAIN_ANIMATION);
-    }
-    setTimeout(() => {
+        }
         $("#slider-bar-amount").draggable({ disabled: false });
-        $("#slider-speed-amount").draggable({ disabled: false });
+        // $("#slider-speed-amount").draggable({ disabled: false });
         $('#sortClick').prop('disabled', false);
         $('#generateNewArrayClick').prop('disabled', false);
         $('#userInfoWarning').html("");
-    }, bars.values.length * FANCY_ANIMATION_DELAY + TIME_TO_FINISH_MAIN_ANIMATION);
+        $('#sortClick').html('SORT');
+        $('#sortClick').addClass('btn-primary');
+        $('#sortClick').removeClass('btn-danger');
+        $('#sortClick').attr("data-sort", 'true');
+    });
+}
+function showOneAnimation(animate, sortDelay) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let barHtmlArr = document.getElementsByClassName("arrayBar");
+        if (animate.setVal) { // setting height to value
+            if (animate.values.length < 2)
+                return;
+            barHtmlArr[animate.values[0]].style.height = `${animate.values[1]}px`;
+        }
+        else if (animate.swaps) { //swapping two values
+            if (animate.values.length < 2)
+                return;
+            let temp = barHtmlArr[animate.values[0]].style.height;
+            let temp2 = barHtmlArr[animate.values[1]].style.height;
+            barHtmlArr[animate.values[0]].style.height = temp2;
+            barHtmlArr[animate.values[1]].style.height = temp;
+        }
+        else { //setting color to values
+            for (let position of animate.values) {
+                if (barHtmlArr[position])
+                    (barHtmlArr[position]).style.backgroundColor = animate.color;
+            }
+        }
+        if (animate.arrRefs != 0)
+            $('#ArrayReferences').html(animate.arrRefs.toString());
+        if (animate.arrSwaps != 0)
+            $('#ArraySwaps').html(animate.arrSwaps.toString());
+    });
+}
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
