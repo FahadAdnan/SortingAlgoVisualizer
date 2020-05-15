@@ -27,8 +27,6 @@ $(document).ready(function () {
   bars.populateBars();
 });
 
-
-
 $("#slider-bar-amount").draggable({
   axis: "x",
   containment: "#sliderbars",
@@ -37,11 +35,7 @@ $("#slider-bar-amount").draggable({
       parseInt($("#sliderbars").css("margin-left")) +
       $("#slider-bar-amount").position().left;
     console.log("Amount of bars" + barAmount);
-    if (barAmount == 400) {
-      bars.populateData(500);
-    } else {
-      bars.populateData(barAmount);
-    }
+    bars.populateData(barAmount);
     bars.populateBars();
   },
 });
@@ -54,7 +48,12 @@ $("#slider-speed-amount").draggable({
     let delay =
       $("#slider-speed-amount").position().left -
       parseInt($("#sliderspeed").css("margin-left"));
+      if(delay == MAX_SPEED_VALUE){
+        bars.Sortdelay =0;
+        console.log("MAX SPEEEEED");
+      }
       bars.Sortdelay = Math.floor((MAX_SPEED_VALUE - delay)/8);
+    
   },
 });
 
@@ -67,51 +66,59 @@ $(".sortType").on("click", function () {
 });
 
 $("#generateNewArrayClick").on("click", function () {
-  let amount = bars.values.length;
-  bars.populateData(amount);
+  bars.isSorting = false;
+  bars.cssAnime = [];
+  bars.populateData(bars.values.length);
   bars.populateBars();
+  $('#sortClick').html('SORT');
+  $('#sortClick').removeClass('btn-danger');
+  $('#sortClick').removeClass('btn-info');
+  $('#sortClick').addClass('btn-primary');
+  $('#sortClick').attr('data-sort','start');
+
 });
 
-$("#refreshPageTitle").on("click", function () {
-  window.location.reload();
-});
 
 $("#sortClick").on("click", function () {
-  if($(this).attr('data-sort') == 'false'){
-    let barHtmlArr = document.getElementsByClassName("arrayBar");
+  if($(this).attr('data-sort') == 'stop'){
     bars.isSorting = false;
-    bars.populateData(bars.values.length);
-    bars.populateBars();
-    console.log("WOW You have to stooooop.");
+    $('#sortClick').html('Restart');
+    $('#sortClick').removeClass('btn-danger');
+    $('#sortClick').addClass('btn-info');
+    $('#sortClick').attr("data-sort", 'restart');
+
+  }else if($(this).attr('data-sort') == 'restart'){
+    bars.isSorting=true;
+    console.log('Got to restart section');
+    Sorting();
   }else{
   bars.isSorting = true;
   console.log('Sort Button Clicked');
-  let anime: cssAnimation[]; // animation array. 
   switch (bars.sortingtype) {
     case "Bubble":
-      anime = bubbleSort(bars.values);
-      Sorting(anime);
+      bars.cssAnime = bubbleSort(bars.values);
+      Sorting();
       break;
     case "Insertion":
-      anime = insertionSort(bars.values);
-      Sorting(anime);
+      bars.cssAnime = insertionSort(bars.values);
+      Sorting();
       break;
     case "Selection":
-      anime = selectionSort(bars.values);
-      Sorting(anime);
+      bars.cssAnime = selectionSort(bars.values);
+      Sorting();
       break;
     case "Quick":
-      anime = quickSortWrapper(bars.values, 0, bars.values.length-1);
-      Sorting(anime);
+      bars.cssAnime = quickSortWrapper(bars.values, 0, bars.values.length-1);
+      Sorting();
       break;
     case "Merge":
-      anime = mergeSortWrapper(bars.values, 0);
+      bars.cssAnime = mergeSortWrapper(bars.values, 0);
       bars.values = mergeSort(bars.values, 0);
-      Sorting(anime);
+      Sorting();
       break;
     case "BInsertion":
-       anime = binaryinsertionSortWrapper(bars.values);
-       Sorting(anime);
+       bars.cssAnime = binaryinsertionSortWrapper(bars.values);
+       Sorting();
       break;
     default:
       console.log("no valid sorting method selected");
@@ -126,56 +133,57 @@ function lockElementsShowTextForSorting(){
   $('#ArrayReferences').html("0");
   $('#ArraySwaps').html("0");
   $("#slider-bar-amount").draggable({ disabled: true });
-  //$("#slider-speed-amount").draggable({ disabled: true });
   
   $('#sortClick').html('STOP');
   $('#sortClick').removeClass('btn-primary');
+  $('#sortClick').removeClass('btn-info');
   $('#sortClick').addClass('btn-danger');
-  $('#sortClick').attr("data-sort", 'false');
+  $('#sortClick').attr("data-sort", 'stop');
 
-
-  //$('#sortClick').prop('disabled', true);
-  $('#generateNewArrayClick').prop('disabled', true);
   $('#userInfoWarning').html("Please wait until sorting is completed or refresh your page.");
 }
 
-// Function that show all Sorting Animations
-async function Sorting(allAniamtions: cssAnimation[]) {
+async function Sorting() {
+  let len = bars.cssAnime.length;
   let barHtmlArr = document.getElementsByClassName("arrayBar");
   lockElementsShowTextForSorting();
 
-  for (const item of allAniamtions) {
-    let speed = bars.Sortdelay;
-    if(!bars.isSorting) break;
+  let speed = bars.Sortdelay;
+
+  for (let i= 0; i < len;i++) {
+     speed = bars.Sortdelay;
+     if(!bars.isSorting){
+      $("#sortClick").attr('data-sort') == 'restart';
+      break;
+    }else{
       await sleep(speed);
-      await showOneAnimation(item, speed);
+      showOneAnimation(bars.cssAnime.shift()!);
     }
+  }
 
     // if you finish sorting then show the fancy finishing animation.
   if (bars.isSorting){ 
     for (let i=0; i < bars.values.length; i++) {
-      await sleep(10);
+      await sleep(FANCY_ANIMATION_DELAY);
       (<HTMLElement>barHtmlArr[i]).style.backgroundColor = "white";
     }
   }  
 
+  if(bars.isSorting){
     $("#slider-bar-amount").draggable({ disabled: false });
-   // $("#slider-speed-amount").draggable({ disabled: false });
     $('#sortClick').prop('disabled', false);
-    $('#generateNewArrayClick').prop('disabled', false);
     $('#userInfoWarning').html(""); 
 
-    
-  $('#sortClick').html('SORT');
-  $('#sortClick').addClass('btn-primary');
-  $('#sortClick').removeClass('btn-danger');
-  $('#sortClick').attr("data-sort", 'true');
-
-
+    $('#sortClick').html('SORT');
+    $('#sortClick').addClass('btn-primary');
+    $('#sortClick').removeClass('btn-danger');
+    bars.isSorting = true;
+}
 }
 
-async function showOneAnimation(animate: cssAnimation, sortDelay:number){
+async function showOneAnimation(animate: cssAnimation){
   let barHtmlArr = document.getElementsByClassName("arrayBar");
+  if (!animate) return;
     if(animate.setVal){ // setting height to value
       if(animate.values.length < 2) return;
       (<HTMLElement>barHtmlArr[animate.values[0]]).style.height = `${animate.values[1]}px`;

@@ -8,6 +8,7 @@
  * 
  *  - Has appropiate functions for generating values for bars and populating barholder with values
  */
+import {cssAnimation} from './Animations.js'
 
 const MIN_BAR_HEIGHT = 10; 
 export class barsGroup{
@@ -16,6 +17,7 @@ export class barsGroup{
     isSorting: boolean;
     Sortdelay: number;
     maxHeight: number;
+    cssAnime: cssAnimation[];
 
     constructor(sortingtype: string, data: number[], Sortdelay: number, maxHeight: number){
         this.sortingtype = sortingtype;
@@ -23,7 +25,7 @@ export class barsGroup{
         this.isSorting = false;
         this.Sortdelay = Sortdelay;
         this.maxHeight = maxHeight;
-    
+        this.cssAnime = [];
     } 
      
     populateData(amount: number){
@@ -44,7 +46,7 @@ export class barsGroup{
             barHolder.firstChild.remove();
           }
         for(let i = 0; i < amount; i++){
-        row = `<div class = "flex-fill arrayBar" style="height:${this.values[i]}px; background-color: white;"></div>`
+        row = `<div class = "flex-fill arrayBar" style="height:${this.values[i]}px;"></div>`
           barHolder.innerHTML += row
         }
       }
