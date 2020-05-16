@@ -16,44 +16,40 @@ const DEFAULT_AMOUNT_OF_BARS = 285;
 const DEFAULT_DELAY_TIME = 11;
 const DEFAULT_MAX_HEIGHT = 700; //px
 const FANCY_ANIMATION_DELAY = 5;
+const SAFETY_PIXEL_DIFF_HEIGHT = 10; //px
+const MAX_SPEED_VALUE = 380;
+let ADJUST_TO_SCREEN_SIZE = 1; // multipler for number for # of bars.
 let bars = new barsGroup("none", [], DEFAULT_DELAY_TIME, DEFAULT_AMOUNT_OF_BARS);
 $(document).ready(function () {
     let maxheight = $(window).innerHeight();
+    let windowWidth = $(window).innerWidth();
     const navHeight = $("#navigationbar").innerHeight();
-    console.log(navHeight);
-    if (maxheight && navHeight) {
-        maxheight -= navHeight;
-        bars.maxHeight = maxheight;
-    }
-    else {
+    if (maxheight && navHeight)
+        bars.maxHeight = maxheight - navHeight - SAFETY_PIXEL_DIFF_HEIGHT;
+    else
         bars.maxHeight = DEFAULT_MAX_HEIGHT;
-    }
-    bars.populateData(DEFAULT_AMOUNT_OF_BARS);
+    if (windowWidth && windowWidth < 700)
+        ADJUST_TO_SCREEN_SIZE = 0.6;
+    bars.populateData(Math.floor(DEFAULT_AMOUNT_OF_BARS * ADJUST_TO_SCREEN_SIZE));
     bars.populateBars();
 });
 $("#slider-bar-amount").draggable({
     axis: "x",
     containment: "#sliderbars",
-    stop: function (event) {
-        let barAmount = parseInt($("#sliderbars").css("margin-left")) +
-            $("#slider-bar-amount").position().left;
+    stop: () => {
+        let barAmount = parseInt($("#sliderbars").css("margin-left")) + $("#slider-bar-amount").position().left;
         console.log("Amount of bars" + barAmount);
-        bars.populateData(barAmount);
+        bars.populateData(barAmount * ADJUST_TO_SCREEN_SIZE);
         bars.populateBars();
     },
 });
 $("#slider-speed-amount").draggable({
     axis: "x",
     containment: "#sliderspeed",
-    drag: function (event) {
-        const MAX_SPEED_VALUE = 380;
+    drag: () => {
         let delay = $("#slider-speed-amount").position().left -
             parseInt($("#sliderspeed").css("margin-left"));
-        if (delay == MAX_SPEED_VALUE) {
-            bars.Sortdelay = 0;
-            console.log("MAX SPEEEEED");
-        }
-        bars.Sortdelay = Math.floor((MAX_SPEED_VALUE - delay) / 8);
+        bars.Sortdelay = Math.floor((MAX_SPEED_VALUE - delay) / 6);
     },
 });
 $(".sortType").on("click", function () {
@@ -64,13 +60,19 @@ $(".sortType").on("click", function () {
     console.log("sorting method changed to " + sort + " Sort");
 });
 $("#generateNewArrayClick").on("click", function () {
-    bars.isSorting = false;
-    bars.cssAnime = [];
+    bars.isSorting = false; //break out of process if currently sorting 
     bars.populateData(bars.values.length);
     bars.populateBars();
-    unlockElementFinishedSorting();
+    bars.cssAnime = []; // clear the animations array
+    unlockElementFinishedSorting(); // reset to default settings
     $('#sortClick').attr("data-sort", 'start');
 });
+/**
+ * The sorting button switches between 3 states.
+ * - SORT - start a new sorting animation
+ * - STOP - stop the sorting animation
+ * - RESTART - restart the sorting animation
+ */
 $("#sortClick").on("click", function () {
     if ($(this).attr('data-sort') == 'stop') {
         bars.isSorting = false; // stop sorting
@@ -82,12 +84,12 @@ $("#sortClick").on("click", function () {
     }
     else if ($(this).attr('data-sort') == 'restart') {
         bars.isSorting = true; // continue sorting 
-        console.log('Got to restart section');
+        console.log('Pressed Restart Button');
         Sorting();
     }
     else {
         bars.isSorting = true; // start sorting 
-        console.log('Sort Button Clicked');
+        console.log('Pressed Sort Button');
         switch (bars.sortingtype) {
             case "Bubble":
                 bars.cssAnime = bubbleSort(bars.values);
@@ -172,12 +174,12 @@ function showOneAnimation(animate) {
         let barHtmlArr = document.getElementsByClassName("arrayBar");
         if (!animate)
             return;
-        if (animate.setVal) { // setting height to value
+        if (animate.setVal) { // setting height to value(index)
             if (animate.values.length < 2)
                 return;
             barHtmlArr[animate.values[0]].style.height = `${animate.values[1]}px`;
         }
-        else if (animate.swaps) { //swapping two values
+        else if (animate.swaps) { //swapping two values(index)
             if (animate.values.length < 2)
                 return;
             let temp = barHtmlArr[animate.values[0]].style.height;

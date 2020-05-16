@@ -1,10 +1,8 @@
 /**
  *  barGroup object
- *  - Stores the type of sorting method - sortingtype
- *  - Stores the array of values - values[]
  *  - Stores if the array is sorted - isSorted (currently unused)
- *  - Stores the delay for animations - Sortdelay
- *  - Stores the maximum height of a bar relative to initial window size - maxHeight
+ *  - Sortdelay - Stores the delay for the sorting animations
+ *  - maxHeight - Stores the maximum height of a bar relative to initial window size
  * 
  *  - Has appropiate functions for generating values for bars and populating barholder with values
  */

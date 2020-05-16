@@ -46,9 +46,9 @@
   text-align: center;
 }
 
-.columnsShape{
+
+.columnsSlider{
   position: relative;
-  display:flex;
   flex-direction: column;
   background-color: rgba(0, 136, 255, 0.555);
   top: 60px;
@@ -91,6 +91,7 @@
 
 #rowShape {
   display: flex;
+  flex-wrap: wrap;
 }
 
 .arrData{
