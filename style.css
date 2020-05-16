@@ -89,10 +89,6 @@
   background: radial-gradient(circle, white 40%, #BEBEC1);
 }
 
-#rowShape {
-  display: flex;
-  flex-wrap: wrap;
-}
 
 .arrData{
   text-align: center;
