@@ -70,29 +70,30 @@ $("#generateNewArrayClick").on("click", function () {
   bars.cssAnime = [];
   bars.populateData(bars.values.length);
   bars.populateBars();
-  $('#sortClick').html('SORT');
-  $('#sortClick').removeClass('btn-danger');
-  $('#sortClick').removeClass('btn-info');
-  $('#sortClick').addClass('btn-primary');
-  $('#sortClick').attr('data-sort','start');
-
+  unlockElementFinishedSorting();
+  $('#sortClick').attr("data-sort", 'start');
 });
 
 
 $("#sortClick").on("click", function () {
-  if($(this).attr('data-sort') == 'stop'){
-    bars.isSorting = false;
+  if($(this).attr('data-sort') == 'stop')
+  {
+    bars.isSorting = false; // stop sorting
+    //switch button to restart mode. 
     $('#sortClick').html('Restart');
     $('#sortClick').removeClass('btn-danger');
     $('#sortClick').addClass('btn-info');
     $('#sortClick').attr("data-sort", 'restart');
-
-  }else if($(this).attr('data-sort') == 'restart'){
-    bars.isSorting=true;
+  }
+  else if($(this).attr('data-sort') == 'restart')
+  {
+    bars.isSorting=true; // continue sorting 
     console.log('Got to restart section');
     Sorting();
-  }else{
-  bars.isSorting = true;
+  }
+  else
+  {
+  bars.isSorting = true; // start sorting 
   console.log('Sort Button Clicked');
   switch (bars.sortingtype) {
     case "Bubble":
@@ -143,6 +144,19 @@ function lockElementsShowTextForSorting(){
   $('#userInfoWarning').html("Please wait until sorting is completed or refresh your page.");
 }
 
+function unlockElementFinishedSorting(){
+  $("#slider-bar-amount").draggable({ disabled: false });
+  $('#sortClick').prop('disabled', false);
+  $('#userInfoWarning').html(""); 
+  
+  $('#sortClick').html('SORT');
+  $('#sortClick').addClass('btn-primary');
+  $('#sortClick').removeClass('btn-danger');
+  $('#sortClick').removeClass('btn-info');
+  $('#sortClick').attr("data-sort", 'start');
+}
+
+
 async function Sorting() {
   let len = bars.cssAnime.length;
   let barHtmlArr = document.getElementsByClassName("arrayBar");
@@ -152,33 +166,23 @@ async function Sorting() {
 
   for (let i= 0; i < len;i++) {
      speed = bars.Sortdelay;
-     if(!bars.isSorting){
-      $("#sortClick").attr('data-sort') == 'restart';
-      break;
-    }else{
+     if(!bars.isSorting) break;
+    else{
       await sleep(speed);
       showOneAnimation(bars.cssAnime.shift()!);
     }
   }
 
-    // if you finish sorting then show the fancy finishing animation.
+ //If sorting finishes - Show fancy Ending Animation
   if (bars.isSorting){ 
     for (let i=0; i < bars.values.length; i++) {
       await sleep(FANCY_ANIMATION_DELAY);
       (<HTMLElement>barHtmlArr[i]).style.backgroundColor = "white";
     }
+
+    unlockElementFinishedSorting(); //unlock all locked features(sliderbar, change info txt)
   }  
 
-  if(bars.isSorting){
-    $("#slider-bar-amount").draggable({ disabled: false });
-    $('#sortClick').prop('disabled', false);
-    $('#userInfoWarning').html(""); 
-
-    $('#sortClick').html('SORT');
-    $('#sortClick').addClass('btn-primary');
-    $('#sortClick').removeClass('btn-danger');
-    bars.isSorting = true;
-}
 }
 
 async function showOneAnimation(animate: cssAnimation){

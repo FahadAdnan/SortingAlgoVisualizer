@@ -68,30 +68,25 @@ $("#generateNewArrayClick").on("click", function () {
     bars.cssAnime = [];
     bars.populateData(bars.values.length);
     bars.populateBars();
-    $('#sortClick').html('SORT');
-    $('#sortClick').removeClass('btn-danger');
-    $('#sortClick').removeClass('btn-info');
-    $('#sortClick').addClass('btn-primary');
-    $('#sortClick').attr('data-sort', 'start');
-});
-$("#refreshPageTitle").on("click", function () {
-    window.location.reload();
+    unlockElementFinishedSorting();
+    $('#sortClick').attr("data-sort", 'start');
 });
 $("#sortClick").on("click", function () {
     if ($(this).attr('data-sort') == 'stop') {
-        bars.isSorting = false;
+        bars.isSorting = false; // stop sorting
+        //switch button to restart mode. 
         $('#sortClick').html('Restart');
         $('#sortClick').removeClass('btn-danger');
         $('#sortClick').addClass('btn-info');
         $('#sortClick').attr("data-sort", 'restart');
     }
     else if ($(this).attr('data-sort') == 'restart') {
-        bars.isSorting = true;
+        bars.isSorting = true; // continue sorting 
         console.log('Got to restart section');
         Sorting();
     }
     else {
-        bars.isSorting = true;
+        bars.isSorting = true; // start sorting 
         console.log('Sort Button Clicked');
         switch (bars.sortingtype) {
             case "Bubble":
@@ -130,14 +125,22 @@ function lockElementsShowTextForSorting() {
     $('#ArrayReferences').html("0");
     $('#ArraySwaps').html("0");
     $("#slider-bar-amount").draggable({ disabled: true });
-    //$("#slider-speed-amount").draggable({ disabled: true });
     $('#sortClick').html('STOP');
     $('#sortClick').removeClass('btn-primary');
     $('#sortClick').removeClass('btn-info');
     $('#sortClick').addClass('btn-danger');
     $('#sortClick').attr("data-sort", 'stop');
-    //$('#sortClick').prop('disabled', true);
     $('#userInfoWarning').html("Please wait until sorting is completed or refresh your page.");
+}
+function unlockElementFinishedSorting() {
+    $("#slider-bar-amount").draggable({ disabled: false });
+    $('#sortClick').prop('disabled', false);
+    $('#userInfoWarning').html("");
+    $('#sortClick').html('SORT');
+    $('#sortClick').addClass('btn-primary');
+    $('#sortClick').removeClass('btn-danger');
+    $('#sortClick').removeClass('btn-info');
+    $('#sortClick').attr("data-sort", 'start');
 }
 function Sorting() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -147,30 +150,20 @@ function Sorting() {
         let speed = bars.Sortdelay;
         for (let i = 0; i < len; i++) {
             speed = bars.Sortdelay;
-            if (!bars.isSorting) {
-                $("#sortClick").attr('data-sort') == 'restart';
+            if (!bars.isSorting)
                 break;
-            }
             else {
                 yield sleep(speed);
                 showOneAnimation(bars.cssAnime.shift());
             }
         }
-        // if you finish sorting then show the fancy finishing animation.
+        //If sorting finishes - Show fancy Ending Animation
         if (bars.isSorting) {
             for (let i = 0; i < bars.values.length; i++) {
                 yield sleep(FANCY_ANIMATION_DELAY);
                 barHtmlArr[i].style.backgroundColor = "white";
             }
-        }
-        if (bars.isSorting) {
-            $("#slider-bar-amount").draggable({ disabled: false });
-            $('#sortClick').prop('disabled', false);
-            $('#userInfoWarning').html("");
-            $('#sortClick').html('SORT');
-            $('#sortClick').addClass('btn-primary');
-            $('#sortClick').removeClass('btn-danger');
-            bars.isSorting = true;
+            unlockElementFinishedSorting(); //unlock all locked features(sliderbar, change info txt)
         }
     });
 }
