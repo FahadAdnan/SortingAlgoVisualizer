@@ -39,7 +39,7 @@ $("#slider-bar-amount").draggable({
     stop: () => {
         let barAmount = parseInt($("#sliderbars").css("margin-left")) + $("#slider-bar-amount").position().left;
         console.log("Amount of bars" + barAmount);
-        bars.populateData(barAmount * ADJUST_TO_SCREEN_SIZE);
+        bars.populateData(Math.floor(barAmount * ADJUST_TO_SCREEN_SIZE));
         bars.populateBars();
     },
 });

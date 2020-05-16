@@ -14,6 +14,7 @@ import {cssAnimation} from "../Animations.js";
 let animationArrM: cssAnimation[] = [];
 let arrRefM =0;
 let arrSwapsM =0;
+const colLightOrange = "rgb(255, 239, 96)";
 
 
 export function mergeSortWrapper(arrVal: number[], start: number): cssAnimation[]{
@@ -45,25 +46,25 @@ function merge(leftarr: number [], rightarr: number[] , start:number): number []
     arrSwapsM++;
     if(leftarr[0] < rightarr[0]){
       animationArrM.push((new cssAnimation("red", [leftind], false, false, arrRefM, arrSwapsM)));
-      animationArrM.push((new cssAnimation("yellow", [leftind], false, false)));
+      animationArrM.push((new cssAnimation(colLightOrange, [leftind], false, false)));
       animationArrM.push((new cssAnimation("red", [start,leftarr[0]], false, true)));
       resultarr.push(leftarr.shift()!); // pops value off left and onto resultarr
       leftind++;
     }else{
       animationArrM.push((new cssAnimation("red", [rightind], false, false, arrRefM, arrSwapsM)));
-      animationArrM.push((new cssAnimation("yellow", [rightind], false, false)));
+      animationArrM.push((new cssAnimation(colLightOrange, [rightind], false, false)));
       animationArrM.push((new cssAnimation("red", [start,rightarr[0]], false, true)));
       resultarr.push(rightarr.shift()!); // pops value off left and onto resultarr
       rightind++;
     }
-    animationArrM.push((new cssAnimation("yellow", [leftind, rightind], false, false)));
+    animationArrM.push((new cssAnimation(colLightOrange, [leftind, rightind], false, false)));
     start++;
   }
     while(leftarr.length){
       arrRefM++;
       arrSwapsM++;
       animationArrM.push((new cssAnimation("red", [leftind], false, false, arrRefM, arrSwapsM)));
-      animationArrM.push((new cssAnimation("yellow", [leftind], false, false)));
+      animationArrM.push((new cssAnimation("rgb(246, 255, 119)", [leftind], false, false)));
       animationArrM.push((new cssAnimation("red", [start,leftarr[0]], false, true)));
       resultarr.push(leftarr.shift()!); // pops value off left and onto resultarr
       leftind++;
@@ -72,7 +73,7 @@ function merge(leftarr: number [], rightarr: number[] , start:number): number []
       arrRefM++;
       arrSwapsM++;
       animationArrM.push((new cssAnimation("red", [rightind], false, false,  arrRefM, arrSwapsM)));
-      animationArrM.push((new cssAnimation("yellow", [rightind], false, false)));
+      animationArrM.push((new cssAnimation("rgb(246, 255, 119)", [rightind], false, false)));
       animationArrM.push((new cssAnimation("red", [start,rightarr[0]], false, true)));
       resultarr.push(rightarr.shift()!); // pops value off left and onto resultarr
       rightind++;
