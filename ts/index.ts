@@ -140,7 +140,6 @@ function lockElementsShowTextForSorting(){
   $('#sortClick').addClass('btn-danger');
   $('#sortClick').attr("data-sort", 'stop');
 
-  $('#userInfoWarning').html("Please wait until sorting is completed or refresh your page.");
 }
 function unlockElementFinishedSorting(){
   $("#slider-bar-amount").draggable({ disabled: false });
