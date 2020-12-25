@@ -36,7 +36,6 @@ export class barsGroup{
   }
     populateBars(){
         var barHolder = document.getElementById('barHolder');
-        console.log("Got here");
         let row: string;
         let amount = this.values.length;
         if(barHolder){
