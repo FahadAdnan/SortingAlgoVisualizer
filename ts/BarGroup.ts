@@ -29,9 +29,11 @@ export class barsGroup{
     populateData(amount: number){
       this.clearArray();
       const max = this.maxHeight;
+      let val: number;
       for(let i = 0; i < amount; i++){
        console.log("pushed a value")
-       this.values.push(Math.floor(Math.random() * (max - MIN_BAR_HEIGHT)) + MIN_BAR_HEIGHT);
+       let val = Math.floor(Math.random() * (max - MIN_BAR_HEIGHT)) + MIN_BAR_HEIGHT;
+       if(typeof(val) != 'undefined') { this.values.push(val) };
       }
   }
     populateBars(){
@@ -49,8 +51,6 @@ export class barsGroup{
       }
   }
     clearArray() {
-      while (this.values.length) {
-        this.values.pop();
-      }
+        this.values = [];
   }
 }
