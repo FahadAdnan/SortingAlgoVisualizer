@@ -48,8 +48,8 @@ export function timSortWrapper(arrVal: number[]): cssAnimation []{
   timPartition();
   timReverseDecreasing();
  // mergeChunksTogether();
- // ascendingTimArr = [];
-//  indexBreaksTim = [];
+  ascendingTimArr = [];
+  indexBreaksTim = [];
   return animationsArrT;
 }
 
