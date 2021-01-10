@@ -45,8 +45,8 @@ export function timSortWrapper(arrVal) {
     timPartition();
     timReverseDecreasing();
     // mergeChunksTogether();
-    // ascendingTimArr = [];
-    //  indexBreaksTim = [];
+    ascendingTimArr = [];
+    indexBreaksTim = [];
     return animationsArrT;
 }
 function timPartition() {
