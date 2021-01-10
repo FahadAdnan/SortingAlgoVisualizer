@@ -35,7 +35,7 @@ let arrSwapsT = 0;
 let valuesTim = [];
 let indexBreaksTim = [];
 let ascendingTimArr = [];
-const colgoldenYellow = "rgb(240, 220, 96)";
+const colgoldenYellow = "rgb(255, 239, 96)";
 export function timSortWrapper(arrVal) {
     animationsArrT = [];
     arrRefT = 0;
@@ -43,20 +43,25 @@ export function timSortWrapper(arrVal) {
     valuesTim = arrVal;
     console.log(arrVal);
     timPartition();
+    timReverseDecreasing();
+    // mergeChunksTogether();
+    // ascendingTimArr = [];
+    //  indexBreaksTim = [];
     return animationsArrT;
 }
 function timPartition() {
     let start = 0;
-    let len = valuesTim.length;
-    while (start < len - 1) {
-        let isAscendingOrder = valuesTim[start + 1] >= valuesTim[start];
+    let isAscendingOrder;
+    let valuesTimlen = valuesTim.length;
+    while (start < valuesTimlen - 1) {
+        isAscendingOrder = (valuesTim[start + 1] >= valuesTim[start]);
         ascendingTimArr.push(isAscendingOrder);
-        console.log("Is Ascending: " + isAscendingOrder + " with values " + valuesTim[start] + " " + valuesTim[start + 1]);
-        animationsArrT.push(new cssAnimation(colgoldenYellow, [start], false, false, arrRefT));
+        animationsArrT.push(new cssAnimation(colgoldenYellow, [(start + 1)], false, false, arrRefT));
         indexBreaksTim.push(start);
-        start = binaryInsertionTim(start, len, isAscendingOrder);
+        start = binaryInsertionTim(start, valuesTimlen, isAscendingOrder);
         console.log("FINISHED on " + start + " with value " + valuesTim[start]);
     }
+    indexBreaksTim.push(valuesTimlen - 1);
     console.log(valuesTim);
     return;
 }
@@ -91,8 +96,9 @@ function binaryInsertionTim(start, arrLen, isAscending) {
         moving = curr - 1;
         insertAtValue = BSearchTim(valuesTim, start, curr - 1, tempVal, isAscending);
         let recolorTim = [];
-        for (let k = start; k <= moving; k++)
+        for (let k = start; k <= moving; k++) {
             recolorTim.push(k);
+        }
         while (moving >= insertAtValue) {
             arrRefT++; // not swapping values, just getting one value in array and setting it to another.
             arrSwapsT++;
@@ -110,15 +116,11 @@ function binaryInsertionTim(start, arrLen, isAscending) {
 function BSearchTim(arrVal, left, right, value, isAscending) {
     let mid = 0;
     if (isAscending) {
-        if (arrVal[right] <= value) {
-            arrRefT++;
-            return right + 1;
-        }
         while (left < right) {
             mid = left + Math.floor((right - left) / 2);
             animationsArrT.push(new cssAnimation("red", [mid], false, false, arrRefT));
             if (arrVal[mid] > value) {
-                right = mid;
+                right = mid - 1;
             }
             else {
                 left = mid + 1;
@@ -130,15 +132,11 @@ function BSearchTim(arrVal, left, right, value, isAscending) {
         return left + 1;
     }
     else {
-        if (!(arrVal[right] < value)) {
-            arrRefT++;
-            return right + 1;
-        }
         while (left < right) {
             mid = left + Math.floor((right - left) / 2);
             animationsArrT.push(new cssAnimation("red", [mid], false, false, arrRefT));
             if (!(arrVal[mid] > value)) {
-                right = mid;
+                right = mid - 1;
             }
             else {
                 left = mid + 1;
@@ -148,5 +146,48 @@ function BSearchTim(arrVal, left, right, value, isAscending) {
             return left;
         }
         return left + 1;
+    }
+}
+function timReverseDecreasing() {
+    let ascendingLen = ascendingTimArr.length;
+    let indexBreaksLen = indexBreaksTim.length;
+    let start = 0;
+    let end = 0;
+    console.log("Breaks of: " + indexBreaksTim);
+    console.log("Ascending of: " + ascendingTimArr);
+    for (let i = 0; i < ascendingLen; i++) {
+        if (ascendingTimArr[i] == false) {
+            if ((indexBreaksLen - 1) > i) {
+                start = indexBreaksTim[i];
+                end = (indexBreaksTim[i + 1]) - 1;
+                reverseValuesArr(start, end);
+            }
+        }
+    }
+}
+function reverseValuesArr(left, right) {
+    let templeft = 0;
+    let tempright = 0;
+    while (left < right) {
+        templeft = valuesTim[left];
+        tempright = valuesTim[right];
+        valuesTim[left] = tempright;
+        valuesTim[right] = templeft;
+        animationsArrT.push(new cssAnimation(colgoldenYellow, [left], false, false, arrRefT));
+        animationsArrT.push(new cssAnimation(colgoldenYellow, [right], false, false, arrRefT));
+        arrRefT += 2;
+        arrSwapsT += 2;
+        animationsArrT.push(new cssAnimation("orange", [left, tempright], false, true, arrRefT, arrSwapsT));
+        animationsArrT.push(new cssAnimation("orange", [right, templeft], false, true, arrRefT, arrSwapsT));
+        left += 1;
+        right -= 1;
+    }
+    return;
+}
+function mergeChunksTogether() {
+    for (let i = 0; i < indexBreaksTim.length; i++) {
+        let val = indexBreaksTim[i];
+        console.log("adding the red " + val);
+        animationsArrT.push(new cssAnimation("red", [indexBreaksTim[i]], false, false, arrRefT));
     }
 }
