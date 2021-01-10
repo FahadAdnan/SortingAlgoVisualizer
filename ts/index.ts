@@ -2,7 +2,8 @@ import {barsGroup} from "./BarGroup.js";
 import {cssAnimation} from "./Animations.js";
 import {mergeSortWrapper, mergeSort} from "./SortingMethods/MergeSort.js";
 import {quickSortWrapper} from "./SortingMethods/QuickSort.js";
-import {binaryinsertionSortWrapper} from "./SortingMethods/TimSort.js";
+import {timSortWrapper} from "./SortingMethods/TimSort.js";
+import {binaryinsertionSortWrapper} from "./SortingMethods/BInsertion.js";
 import {bubbleSort,insertionSort,selectionSort} from "./SortingMethods/SimpleAlgorithms.js";
 
 const DEFAULT_AMOUNT_OF_BARS = 285;
@@ -95,6 +96,7 @@ $("#sortClick").on("click", function () {
   {
   bars.isSorting = true; // start sorting 
   console.log('Pressed Sort Button');
+  console.log(bars.sortingtype);
   switch (bars.sortingtype) {
     case "Bubble":
       bars.cssAnime = bubbleSort(bars.values);
@@ -120,6 +122,10 @@ $("#sortClick").on("click", function () {
     case "BInsertion":
        bars.cssAnime = binaryinsertionSortWrapper(bars.values);
        Sorting();
+      break;
+    case "Tim":
+      bars.cssAnime = timSortWrapper(bars.values);
+      Sorting();
       break;
     default:
       console.log("no valid sorting method selected");

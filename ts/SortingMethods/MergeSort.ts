@@ -40,7 +40,6 @@ function merge(leftarr: number [], rightarr: number[] , start:number): number []
   let leftind = start;
   let rightind = start + leftarr.length;
   while(leftarr.length && rightarr.length){
-    console.log("Value of start is: " + start);
     animationArrM.push((new cssAnimation("green", [leftind, rightind], false, false)));
     arrRefM+=2;
     arrSwapsM++;

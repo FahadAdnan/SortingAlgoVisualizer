@@ -10,7 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { barsGroup } from "./BarGroup.js";
 import { mergeSortWrapper, mergeSort } from "./SortingMethods/MergeSort.js";
 import { quickSortWrapper } from "./SortingMethods/QuickSort.js";
-import { binaryinsertionSortWrapper } from "./SortingMethods/TimSort.js";
+import { timSortWrapper } from "./SortingMethods/TimSort.js";
+import { binaryinsertionSortWrapper } from "./SortingMethods/BInsertion.js";
 import { bubbleSort, insertionSort, selectionSort } from "./SortingMethods/SimpleAlgorithms.js";
 const DEFAULT_AMOUNT_OF_BARS = 285;
 const DEFAULT_DELAY_TIME = 11;
@@ -90,6 +91,7 @@ $("#sortClick").on("click", function () {
     else {
         bars.isSorting = true; // start sorting 
         console.log('Pressed Sort Button');
+        console.log(bars.sortingtype);
         switch (bars.sortingtype) {
             case "Bubble":
                 bars.cssAnime = bubbleSort(bars.values);
@@ -116,6 +118,10 @@ $("#sortClick").on("click", function () {
                 bars.cssAnime = binaryinsertionSortWrapper(bars.values);
                 Sorting();
                 break;
+            case "Tim":
+                bars.cssAnime = timSortWrapper(bars.values);
+                Sorting();
+                break;
             default:
                 console.log("no valid sorting method selected");
                 $('#userInfoWarning').html("Please select a valid sorting method from the drop down menu");
@@ -132,7 +138,6 @@ function lockElementsShowTextForSorting() {
     $('#sortClick').removeClass('btn-info');
     $('#sortClick').addClass('btn-danger');
     $('#sortClick').attr("data-sort", 'stop');
-    $('#userInfoWarning').html("Please wait until sorting is completed or refresh your page.");
 }
 function unlockElementFinishedSorting() {
     $("#slider-bar-amount").draggable({ disabled: false });

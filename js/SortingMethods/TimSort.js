@@ -1,145 +1,193 @@
 import { cssAnimation } from "../Animations.js";
 /*  Hybrid Sorting - Tim Sort
  * Time Complexity: Best: O(nlog(n))  Avg: O(nlog(n))  Worst: O(nlog(n))
- * Space Complexity:
+ * Space Complexity: O(n)
+ *
+ * The fastest sorting algorithm will always be O(n)*log(n), but the associated constant factor can vary
+ *
+ *  1) Quick Sort - stores a left, right, and pivot poitner, bad for the constant
+ *  2) Merge Sort - Needs alot of extra space at O(N), bad for the constant
+ *  3) Heap Sort - has bad Stability of Sorting as the swaps are random, poor prediction on next move, bad for the constant
+ *
+ *  Insertion Sort is O(n^2), the constant is small (in-place & good stability of sorting)
+ *  ci < cq(n*log(n)) for small n -- specifically for the size of 32 - 64
+ *
+ *  So we can use merge sort with a block size of 32-64, saving on 2^5 = 64 -- 5 levels
+ *  So the time complexity becomes: O(n* [log(n) - 5]) + ci*(64^2) (neglible second portion)
+ *   -- but if there is a continuously increasing/decreasing section we can mark this as a larger portion 64
+ *  So the time complexity becomes: O(n* [log(n) - x]) where x >= 5
+ *  Any decreasing section we can reverse, which is also neglible.
+ *
+ *  But when finding continuously increasing/decreasing sections we should use binary insertion sort as
+ *  it the better version of insertion sort (less comparisions)
+ *   Chunk of Size (c) = c*log(c) -- for finding where to fit.. O((c^2)/2) shifts (worst case)
+ *
+ *  For merging arrays we only need to make a copy of the smaller chunk.
+ *   e.g size 3 and size 7 chunks in the array
+ *  -- make a copy of the size 3 array and then shift the other set of 7 values up 3 spaces (if it comes first), otherwise don't do anything
+ *  -- Then run insertion sort on the two parts removing the extra array generated.
+ *
+ * Note: There are more parts that can be implemented such as galloping, but i'll leave that till later
  */
 let animationsArrT = [];
 let arrRefT = 0;
 let arrSwapsT = 0;
-export function binaryinsertionSortWrapper(arrVal) {
+let valuesTim = [];
+let indexBreaksTim = [];
+let ascendingTimArr = [];
+const colgoldenYellow = "rgb(255, 239, 96)";
+export function timSortWrapper(arrVal) {
     animationsArrT = [];
     arrRefT = 0;
     arrSwapsT = 0;
-    binaryinsertionSort(arrVal);
+    valuesTim = arrVal;
+    console.log(arrVal);
+    timPartition();
+    timReverseDecreasing();
+    // mergeChunksTogether();
+    // ascendingTimArr = [];
+    //  indexBreaksTim = [];
     return animationsArrT;
 }
-function binaryinsertionSort(arrVal) {
-    const len = arrVal.length;
-    animationsArrT.push(new cssAnimation("orange", [0], false, false));
-    var insertVal = 0;
-    let recolor = [];
-    for (let i = 1; i < len; i++) {
+function timPartition() {
+    let start = 0;
+    let isAscendingOrder;
+    let valuesTimlen = valuesTim.length;
+    while (start < valuesTimlen - 1) {
+        isAscendingOrder = (valuesTim[start + 1] >= valuesTim[start]);
+        ascendingTimArr.push(isAscendingOrder);
+        animationsArrT.push(new cssAnimation(colgoldenYellow, [(start + 1)], false, false, arrRefT));
+        indexBreaksTim.push(start);
+        start = binaryInsertionTim(start, valuesTimlen, isAscendingOrder);
+        console.log("FINISHED on " + start + " with value " + valuesTim[start]);
+    }
+    indexBreaksTim.push(valuesTimlen - 1);
+    console.log(valuesTim);
+    return;
+}
+function valueFits(isAscending, a, b) {
+    if (isAscending) {
+        return (a >= b);
+    }
+    else {
+        return (a <= b);
+    }
+}
+function binaryInsertionTim(start, arrLen, isAscending) {
+    let insertAtValue = -1;
+    let curr = start + 1;
+    let itFits;
+    let tempVal = 0;
+    let moving = 0;
+    while ((curr - start < 32) && (curr < (arrLen))) {
+        itFits = valueFits(isAscending, valuesTim[curr], valuesTim[curr - 1]);
         arrRefT += 2;
-        while (arrVal[i] >= arrVal[i - 1]) {
-            animationsArrT.push(new cssAnimation("green", [i, i - 1], false, false, arrRefT));
+        while ((itFits) && (curr < arrLen)) {
+            animationsArrT.push(new cssAnimation("green", [curr, curr - 1], false, false, arrRefT));
+            curr += 1;
+            itFits = valueFits(isAscending, valuesTim[curr], valuesTim[curr - 1]);
             arrRefT += 2;
-            i++;
         }
-        arrRefT++;
-        insertVal = arrVal[i];
-        console.log(insertVal);
-        animationsArrT.push(new cssAnimation("green", [i], false, false, arrRefT));
-        let j = i - 1;
-        let insertAt = BSearch(arrVal, 0, j, insertVal);
-        while (j >= insertAt) {
+        if (curr - start > 32 || curr > (arrLen - 1)) {
+            break;
+        }
+        arrRefT += 1;
+        tempVal = valuesTim[curr];
+        moving = curr - 1;
+        insertAtValue = BSearchTim(valuesTim, start, curr - 1, tempVal, isAscending);
+        let recolorTim = [];
+        for (let k = start; k <= moving; k++) {
+            recolorTim.push(k);
+        }
+        while (moving >= insertAtValue) {
             arrRefT++; // not swapping values, just getting one value in array and setting it to another.
             arrSwapsT++;
-            arrVal[j + 1] = arrVal[j];
-            animationsArrT.push(new cssAnimation("red", [j, j + 1], true, false, arrRefT, arrSwapsT));
-            j = j - 1;
+            valuesTim[moving + 1] = valuesTim[moving];
+            animationsArrT.push(new cssAnimation("red", [moving, moving + 1], true, false, arrRefT, arrSwapsT));
+            moving = moving - 1;
         }
         arrSwapsT++;
-        arrVal[j + 1] = insertVal;
-        animationsArrT.push(new cssAnimation("orange", [j + 1, insertVal], false, true, arrRefT, arrSwapsT));
-        recolor = [];
-        for (let k = 0; k <= i; k++)
-            recolor.push(k);
-        animationsArrT.push(new cssAnimation("orange", recolor, false, false));
+        valuesTim[moving + 1] = tempVal;
+        animationsArrT.push(new cssAnimation("orange", [moving + 1, tempVal], false, true, arrRefT, arrSwapsT));
+        animationsArrT.push(new cssAnimation("orange", recolorTim, false, false));
     }
-    return animationsArrT;
+    return curr + 1;
 }
-function BSearch(arrVal, left, right, value) {
+function BSearchTim(arrVal, left, right, value, isAscending) {
     let mid = 0;
-    if (arrVal[right] <= value) {
-        arrRefT++;
-        return right + 1;
-    }
-    while (left < right) {
-        mid = left + Math.floor((right - left) / 2);
-        animationsArrT.push(new cssAnimation("red", [mid], false, false, arrRefT));
-        if (arrVal[mid] > value) {
-            arrRefT++;
-            right = mid;
+    if (isAscending) {
+        while (left < right) {
+            mid = left + Math.floor((right - left) / 2);
+            animationsArrT.push(new cssAnimation("red", [mid], false, false, arrRefT));
+            if (arrVal[mid] > value) {
+                right = mid - 1;
+            }
+            else {
+                left = mid + 1;
+            }
         }
-        else {
-            arrRefT++;
-            left = mid + 1;
+        if (arrVal[left] > value) {
+            return left;
         }
-    }
-    arrRefT++;
-    if (arrVal[left] > value) {
-        return left;
-    }
-    else
         return left + 1;
-}
-let runArr = [];
-function TimSort(arrVal) {
-    let goneThrough = 0;
-    const len = arrVal.length;
-    while (goneThrough < len) {
-        let currInd = BInsertionSort(arrVal, goneThrough);
-        goneThrough += currInd;
     }
-    while (runArr.length >= 2) {
-        runArr.push(timMerge(runArr[runArr.length], runArr[1]));
-        runArr.slice(2, runArr.length);
-    }
-    return runArr[0];
-}
-function timMerge(arr1, arr2) {
-    let end = arr1.length + arr2.length - 1;
-    let p1 = arr1.length - 1;
-    let p2 = arr2.length - 1;
-    while (p1 >= 0 && p2 >= 0) {
-        if (arr1[p1] >= arr2[p2])
-            arr1[end--] = arr1[p1--];
-        else
-            arr1[end--] = arr2[p2--];
-    }
-    while (p1 >= 0)
-        arr1[end--] = arr1[p1--];
-    while (p2 >= 0)
-        arr1[end--] = arr2[p2--];
-    return arr1;
-}
-function BInsertionSort(arrVal, goneThrough) {
-    const len = 32;
-    var insertVal = 0;
-    let count = goneThrough + 1;
-    while (count < 32) {
-        //continually add values if they're sorted
-        while (arrVal[count] >= arrVal[count - 1])
-            count++;
-        insertVal = arrVal[count];
-        let j = count - 1;
-        let insertAt = BSearch(arrVal, goneThrough, j, insertVal);
-        while (j >= insertAt) {
-            arrVal[j + 1] = arrVal[j];
-            j = j - 1;
+    else {
+        while (left < right) {
+            mid = left + Math.floor((right - left) / 2);
+            animationsArrT.push(new cssAnimation("red", [mid], false, false, arrRefT));
+            if (!(arrVal[mid] > value)) {
+                right = mid - 1;
+            }
+            else {
+                left = mid + 1;
+            }
         }
-        arrVal[j + 1] = insertVal;
-    }
-    console.log(arrVal);
-    return arrVal.length;
-}
-function BinaryS(arrVal, left, right, value) {
-    let mid = 0;
-    if (arrVal[right] <= value) {
-        return right + 1;
-    }
-    while (left < right) {
-        mid = left + Math.floor((right - left) / 2);
-        if (arrVal[mid] > value) {
-            right = mid;
+        if (!(arrVal[left] > value)) {
+            return left;
         }
-        else {
-            left = mid + 1;
-        }
-    }
-    if (arrVal[left] > value) {
-        return left;
-    }
-    else
         return left + 1;
+    }
+}
+function timReverseDecreasing() {
+    let ascendingLen = ascendingTimArr.length;
+    let indexBreaksLen = indexBreaksTim.length;
+    let start = 0;
+    let end = 0;
+    console.log("Breaks of: " + indexBreaksTim);
+    console.log("Ascending of: " + ascendingTimArr);
+    for (let i = 0; i < ascendingLen; i++) {
+        if (ascendingTimArr[i] == false) {
+            if ((indexBreaksLen - 1) > i) {
+                start = indexBreaksTim[i];
+                end = (indexBreaksTim[i + 1]) - 1;
+                reverseValuesArr(start, end);
+            }
+        }
+    }
+}
+function reverseValuesArr(left, right) {
+    let templeft = 0;
+    let tempright = 0;
+    while (left < right) {
+        templeft = valuesTim[left];
+        tempright = valuesTim[right];
+        valuesTim[left] = tempright;
+        valuesTim[right] = templeft;
+        animationsArrT.push(new cssAnimation(colgoldenYellow, [left], false, false, arrRefT));
+        animationsArrT.push(new cssAnimation(colgoldenYellow, [right], false, false, arrRefT));
+        arrRefT += 2;
+        arrSwapsT += 2;
+        animationsArrT.push(new cssAnimation("orange", [left, tempright], false, true, arrRefT, arrSwapsT));
+        animationsArrT.push(new cssAnimation("orange", [right, templeft], false, true, arrRefT, arrSwapsT));
+        left += 1;
+        right -= 1;
+    }
+    return;
+}
+function mergeChunksTogether() {
+    for (let i = 0; i < indexBreaksTim.length; i++) {
+        let val = indexBreaksTim[i];
+        console.log("adding the red " + val);
+        animationsArrT.push(new cssAnimation("red", [indexBreaksTim[i]], false, false, arrRefT));
+    }
 }
