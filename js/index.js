@@ -120,7 +120,7 @@ $("#sortClick").on("click", function () {
                 break;
             case "Tim":
                 bars.cssAnime = timSortWrapper(bars.values);
-                Sorting();
+                Sorting(true);
                 break;
             default:
                 console.log("no valid sorting method selected");
@@ -149,7 +149,7 @@ function unlockElementFinishedSorting() {
     $('#sortClick').removeClass('btn-info');
     $('#sortClick').attr("data-sort", 'start');
 }
-function Sorting() {
+function Sorting(isNotFinished = false) {
     return __awaiter(this, void 0, void 0, function* () {
         let len = bars.cssAnime.length;
         let barHtmlArr = document.getElementsByClassName("arrayBar");
@@ -169,6 +169,9 @@ function Sorting() {
             for (let i = 0; i < bars.values.length; i++) {
                 yield sleep(FANCY_ANIMATION_DELAY);
                 barHtmlArr[i].style.backgroundColor = "white";
+            }
+            if (isNotFinished) {
+                alert("I have been busy with school so merging runs on tim sort is not yet finished, thanks for understanding :D");
             }
             unlockElementFinishedSorting(); //unlock all locked features(sliderbar, change info txt)
         }

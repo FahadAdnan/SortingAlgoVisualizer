@@ -61,7 +61,7 @@ function timPartition() {
         start = binaryInsertionTim(start, valuesTimlen, isAscendingOrder);
         console.log("FINISHED on " + start + " with value " + valuesTim[start]);
     }
-    indexBreaksTim.push(valuesTimlen - 1);
+    indexBreaksTim.push(valuesTimlen);
     console.log(valuesTim);
     return;
 }
